@@ -1,0 +1,13 @@
+PUBLIER SUR NETLIFY
+1. Allez sur app.netlify.com/drop (compte gratuit).
+2. Glissez-deposez le DOSSIER "site" (celui qui contient index.html).
+3. Netlify donne une adresse du type  https://xxxx.netlify.app
+   (Site configuration > Change site name pour la personnaliser).
+4. IMPORTANT : ouvrez index.html dans un editeur de texte et remplacez
+   VOTRE-SITE.netlify.app par votre vraie adresse (3 endroits : og:url,
+   og:image, twitter:image). Puis redeposez le dossier sur Netlify.
+5. Envoyez le lien aux eleves. Si WhatsApp garde un ancien apercu,
+   ajoutez ?v=2 a la fin du lien.
+
+Fichiers : index.html, logique.pdf, fonctions-usuelles.pdf, apercu.png
+Mode enseignant : ajoutez #prof a la fin de l'adresse.
