@@ -8,14 +8,14 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Mathématiques MPSI – Documents à télécharger">
 <meta property="og:description" content="Cours de mathématiques MPSI : Éléments de logique, Fonctions usuelles. Documents PDF à consulter et à télécharger.">
-<meta property="og:url" content="https://VOTRE-SITE.netlify.app/">
-<meta property="og:image" content="https://VOTRE-SITE.netlify.app/apercu.png">
+<meta property="og:url" content="https://said-lgtm-alt.github.io/cahier-mpsi-z/">
+<meta property="og:image" content="https://said-lgtm-alt.github.io/cahier-mpsi-z/apercu.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="Centre Al Zahrawi – CPGE">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://VOTRE-SITE.netlify.app/apercu.png">
+<meta name="twitter:image" content="https://said-lgtm-alt.github.io/cahier-mpsi-z/apercu.png">
 <meta name="twitter:title" content="Mathématiques MPSI – Documents à télécharger">
 <meta name="twitter:description" content="Cours de mathématiques MPSI : Éléments de logique, Fonctions usuelles. Documents PDF à consulter et à télécharger.">
 <style>
@@ -48,6 +48,9 @@ form .f1{flex:2 1 220px}form .f2{flex:1 1 140px}
 body.eleve .bar button,body.eleve aside p,body.eleve button.x{display:none}
 .crumb{font-size:14px;color:var(--mut);margin:10px 2px}
 .crumb a{color:var(--ac);cursor:pointer}
+#pub{display:none;background:#3a2f12;border:1px solid #c9a227;border-radius:4px;padding:12px 14px;margin-top:14px;font-size:14px}
+#pub.show{display:block}#pub ol{margin:6px 0 0 18px;padding:0}#pub li{display:list-item;border:none;padding:2px 0}
+body.eleve #pub{display:none!important}
 @media(max-width:760px){.wrap{flex-direction:column;padding:12px}aside{width:100%}li{flex-wrap:wrap}}
 </style>
 </head>
@@ -57,10 +60,7 @@ body.eleve .bar button,body.eleve aside p,body.eleve button.x{display:none}
 <h3>📁 Documents généraux</h3>
 <h2>Mathématiques</h2>
 <div id="nav"></div>
-<p style="margin:14px 0 0;display:flex;gap:6px;flex-wrap:wrap">
-<button onclick="exp()">Exporter</button>
-<label class="btn">Importer<input type="file" accept=".json" hidden onchange="imp(event)"></label>
-</p>
+<p style="margin:14px 0 0;display:flex;gap:6px;flex-wrap:wrap"><button onclick="exp()">Télécharger documents.json</button><button onclick="try{localStorage.removeItem('prof')}catch(e){};location.hash='';location.reload()">Quitter le mode enseignant</button></p>
 </aside>
 <main>
 <div class="bar"><span id="title"></span>
@@ -76,33 +76,42 @@ body.eleve .bar button,body.eleve aside p,body.eleve button.x{display:none}
 <form id="fx" onsubmit="addDoc(event)">
 <input class="f1" id="xt" placeholder="Titre (ex : 5 : Applications et dénombrement)" required>
 <input class="f2" id="xd" type="date">
-<input class="f1" id="xp" placeholder="Chemin ou lien du PDF (ex : cours/chap5.pdf)">
-<label class="btn">Choisir un fichier<input type="file" id="xf" hidden onchange="pick(event)"></label>
+<input class="f1" id="xp" placeholder="Nom du fichier PDF (rempli en choisissant le fichier)" readonly>
+<label class="btn">Choisir le PDF<input type="file" id="xf" accept=".pdf,application/pdf" hidden onchange="pick(event)"></label>
 <button>Ajouter</button>
 </form>
 
+<div id="pub"></div>
 <ul id="list"></ul>
 </main>
 </div>
 
 <script>
 const SECTIONS=["Cours, année actuelle","TD, année actuelle","Devoirs surveillés","Devoirs \"maison\"","Colles","Formulaires","Archives"];
-const KEY="cahier-mpsi-v1";
-const EL=!/prof/.test(location.hash);document.body.classList.toggle("eleve",EL);
-const FILES={logique:"logique.pdf",fonctions:"fonctions-usuelles.pdf"};
+try{if(/prof/.test(location.hash))localStorage.setItem("prof","1")}catch(e){}
+let fl=false;try{fl=localStorage.getItem("prof")==="1"}catch(e){}
+const EL=!(/prof/.test(location.hash)||fl);document.body.classList.toggle("eleve",EL);
+const SEED={"Cours, année actuelle": [{"name": "Logique", "date": "", "href": "logique.pdf"}, {"name": "Fonctions usuelles", "date": "", "href": "fonctions-usuelles.pdf"}], "Devoirs surveillés": [{"name": "DS n°1", "date": "", "href": "ds-1-2627.pdf"}]};
+let S={},cur=SECTIONS[0],path=[],pend=[],dirty=false,loadFail=false;
+function fill(d){const o={};SECTIONS.forEach(s=>o[s]=(d&&d[s])||[]);return o}
+S=fill(SEED);render();
+fetch("documents.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(d=>{S=fill(d);render()}).catch(()=>{loadFail=true;render()});
 function saveFile(name,data,type){const l=document.createElement("a");l.href=URL.createObjectURL(new Blob([data],{type}));l.download=name;document.body.appendChild(l);l.click();l.remove()}
-const SEED={"Cours, année actuelle":[
- {name:"Logique",date:"",pdf:"logique"},
- {name:"Fonctions usuelles",date:"",pdf:"fonctions"}]};
-let S=load(),cur=SECTIONS[0],path=[];
-function load(){if(!EL)try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&SECTIONS.some(s=>(d[s]||[]).length))return d}catch(e){}
- const o={};SECTIONS.forEach(s=>o[s]=(SEED[s]||[]).map(x=>({...x})));return o}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function node(){let a=S[cur];for(const i of path)a=a[i].items;return a}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function fmt(d){if(!d)return"";const[y,m,j]=d.split("-");return j+"/"+m+"/"+y}
+function url(h){return /^https?:/i.test(h)?h:encodeURI(h)}
+function safe(n){return n.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9._-]+/g,"-").replace(/^-+|-+$/g,"").toLowerCase()}
 function toggle(id){const f=document.getElementById(id);const was=f.classList.contains("show");
  document.querySelectorAll("form").forEach(x=>x.classList.remove("show"));if(!was)f.classList.add("show")}
+function pubBox(){const b=document.getElementById("pub");if(!dirty&&!loadFail){b.classList.remove("show");return}
+ b.classList.add("show");
+ const w=loadFail?'<div style="color:#ff9b9b;margin-bottom:8px">⚠ La liste en ligne (documents.json) n’a pas pu être chargée : la page est ouverte depuis le disque ou sans connexion. Les documents récents n’apparaissent pas. Ne publiez rien depuis cette page : ouvrez l’adresse du site (avec #prof).</div>':"";
+ if(!dirty){b.innerHTML=w;return}
+ b.innerHTML=w+"<strong>Modifications non publiées.</strong> Pour que vos élèves les voient :<ol>"+
+ pend.map((p,k)=>`<li>Téléchargez le PDF sous le bon nom : <button onclick="dlPend(${k})">${esc(p.name)}</button></li>`).join("")+
+ `<li>Téléchargez <button onclick="exp()">documents.json</button></li>`+
+ "<li>Sur GitHub (dépôt du site) : <em>Add file</em> puis <em>Upload files</em>, déposez ces fichiers (ils remplacent l’ancien documents.json), puis <em>Commit changes</em>.</li></ol>"}
 function render(){
  document.getElementById("nav").innerHTML=SECTIONS.map(s=>`<a class="${s==cur?"on":""}" onclick="go('${s.replace(/'/g,"\\'").replace(/"/g,"&quot;")}')">${esc(s)}</a>`).join("");
  document.getElementById("title").textContent="Mathématiques / "+cur;
@@ -113,20 +122,27 @@ function render(){
  const dirs=items.map((x,i)=>({x,i})).filter(o=>o.x.items);
  const docs=items.map((x,i)=>({x,i})).filter(o=>!o.x.items);
  let h=dirs.map(({x,i})=>`<li class="dir"><span class="t">📁 <a onclick="open_(${i})">${esc(x.name)}</a></span><span class="m">(${x.items.length} documents)</span><button class="x" title="Supprimer" onclick="del(${i})">✕</button></li>`).join("");
- h+=docs.map(({x,i})=>`<li><span class="t">📄 ${x.pdf?`<a href="${FILES[x.pdf]}" target="_blank" rel="noopener">${esc(x.name)}</a>`:x.href?`<a href="${esc(x.href)}" target="_blank">${esc(x.name)}</a>`:`<strong>${esc(x.name)}</strong>`}</span><span class="m">${x.date?"(pdf, "+fmt(x.date)+")":"(pdf)"}</span>${x.pdf?`<a class="btn" href="${FILES[x.pdf]}" download style="text-decoration:none">Télécharger</a>`:""}<button class="x" title="Supprimer" onclick="del(${i})">✕</button></li>`).join("");
- document.getElementById("list").innerHTML=h||'<li class="empty">Dossier vide. Utilisez « + Document » ou « + Dossier ».</li>';
+ h+=docs.map(({x,i})=>{const pdf=/\.pdf$/i.test(x.href||"");
+  return `<li><span class="t">📄 ${x.href?`<a href="${esc(url(x.href))}" target="_blank" rel="noopener">${esc(x.name)}</a>`:`<strong>${esc(x.name)}</strong>`}</span><span class="m">${x.date?(pdf?"(pdf, ":"(")+fmt(x.date)+")":(pdf?"(pdf)":"")}</span>${pdf?`<a class="btn" href="${esc(url(x.href))}" download style="text-decoration:none">Télécharger</a>`:""}<button class="x" title="Supprimer" onclick="del(${i})">✕</button></li>`}).join("");
+ document.getElementById("list").innerHTML=h||'<li class="empty">Dossier vide.</li>';
+ pubBox();
 }
 function go(s){cur=s;path=[];render()}
 function up(n){path=path.slice(0,n);render()}
 function open_(i){path.push(i);render()}
-function del(i){const it=node()[i];if(confirm("Supprimer « "+it.name+" » ?")){node().splice(i,1);save();render()}}
-function addDir(e){e.preventDefault();node().push({name:dn.value.trim(),items:[]});dn.value="";save();render()}
-function addDoc(e){e.preventDefault();node().push({name:xt.value.trim(),date:xd.value,href:xp.value.trim()});xt.value=xp.value=xd.value="";xf.value="";save();render()}
-function pick(e){const f=e.target.files[0];if(!f)return;if(!xp.value)xp.value=f.name;if(!xt.value)xt.value=f.name.replace(/\.[^.]+$/,"");
+function del(i){const it=node()[i];if(confirm("Supprimer « "+it.name+" » ?")){node().splice(i,1);dirty=true;render()}}
+function addDir(e){e.preventDefault();node().push({name:dn.value.trim(),items:[]});dn.value="";dirty=true;render()}
+function addDoc(e){e.preventDefault();
+ if(!pendFile){alert("Choisissez d’abord le fichier PDF.");return}
+ const nm=safe(pendFile.name);
+ node().push({name:xt.value.trim(),date:xd.value,href:nm});
+ pend=pend.filter(p=>p.name!=nm);pend.push({name:nm,file:pendFile});
+ xt.value=xp.value=xd.value="";xf.value="";pendFile=null;dirty=true;render()}
+let pendFile=null;
+function pick(e){const f=e.target.files[0];if(!f)return;pendFile=f;xp.value=safe(f.name);if(!xt.value)xt.value=f.name.replace(/\.[^.]+$/,"");
  if(!xd.value)xd.value=new Date(f.lastModified).toISOString().slice(0,10)}
-function exp(){saveFile("cahier-mpsi.json",JSON.stringify(S,null,1),"application/json")}
-function imp(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{S=JSON.parse(r.result);save();go(SECTIONS[0])}catch(x){alert("Fichier invalide")}};r.readAsText(f)}
-render();
+function dlPend(k){const p=pend[k];saveFile(p.name,p.file,"application/pdf")}
+function exp(){if(loadFail&&!confirm("La liste en ligne n’a pas été chargée : ce fichier risque d’effacer des documents. Continuer quand même ?"))return;saveFile("documents.json",JSON.stringify(S,null,1),"application/json")}
 </script>
 </body>
 </html>
