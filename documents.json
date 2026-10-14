@@ -1,21 +1,16 @@
 {
  "Cours, année actuelle": [
-  {
-   "name": "Logique",
-   "date": "",
-   "href": "logique.pdf"
-  },
-  {
-   "name": "Fonctions usuelles",
-   "date": "",
-   "href": "fonctions-usuelles.pdf"
-  }
+  {"name": "Logique", "date": "", "href": "logique.pdf"},
+  {"name": "Fonctions usuelles", "date": "", "href": "fonctions-usuelles.pdf"},
+  {"name": "Chapitre 3 : Théorie des ensembles", "date": "", "href": "theorie-des-ensembles.pdf"}
  ],
  "Devoirs surveillés": [
-  {
-   "name": "DS n°1",
-   "date": "",
-   "href": "ds-1-2627.pdf"
-  }
+  {"name": "DS n°1", "date": "", "href": "ds-1-2627.pdf"}
+ ],
+ "Colles": [
+  {"name": "Colle n°1 – semaine du 7 septembre", "date": "", "href": "colle-semaine1.pdf"},
+  {"name": "Colle n°2 – semaine du 14 septembre", "date": "", "href": "colle-semaine2.pdf"},
+  {"name": "Colle n°4", "date": "", "href": "semaine4.pdf"},
+  {"name": "Colle n°5", "date": "", "href": "semaine5.pdf"}
  ]
 }
