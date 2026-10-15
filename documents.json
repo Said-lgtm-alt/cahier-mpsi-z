@@ -10,8 +10,8 @@
   {"name": "DS n°2", "date": "", "href": "DS-2.pdf"}
  ],
  "Colles": [
-  {"name": "Semaine1:Fonctions-usuelles – semaine du 7 septembre", "date": "", "href": "colle-semaine1.pdf"},
-  {"name": "Semaine2:Ensembles&applications – semaine du 14 septembre", "date": "", "href": "colle-semaine2.pdf"},
+  {"name": "Semaine1:Fonctions-usuelles", "date": "", "href": "colle-semaine1.pdf"},
+  {"name": "Semaine2:Ensembles&applications", "date": "", "href": "colle-semaine2.pdf"},
   {"name": "Semaine3:Relations-binaires", "date": "", "href": "semaine3.pdf"},
   {"name": "Semaine4:Calcul-algebrique", "date": "", "href": "semaine4.pdf"},
   {"name": "Semaine5:Ensembles-finis-Denombrement", "date": "", "href": "semaine5.pdf"},
