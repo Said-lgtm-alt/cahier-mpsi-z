@@ -8,10 +8,11 @@
   {"name": "DS n°1", "date": "", "href": "ds-1-2627.pdf"}
  ],
  "Colles": [
-  {"name": "Colle n°1 – semaine du 7 septembre", "date": "", "href": "colle-semaine1.pdf"},
-  {"name": "Colle n°2 – semaine du 14 septembre", "date": "", "href": "colle-semaine2.pdf"},
-  {"name": "Colle n°4", "date": "", "href": "semaine4.pdf"},
-  {"name": "Colle n°5", "date": "", "href": "semaine5.pdf"},
-  {"name": "Colle n°6", "date": "", "href": "semaine6.pdf"}
+  {"name": "Semaine1:Fonctions-usuelles – semaine du 7 septembre", "date": "", "href": "colle-semaine1.pdf"},
+  {"name": "Semaine2:Ensembles&applications – semaine du 14 septembre", "date": "", "href": "colle-semaine2.pdf"},
+  {"name": "Semaine3:Relations-binaires", "date": "", "href": "semaine3.pdf"},
+  {"name": "Semaine4:Calcul-algebrique", "date": "", "href": "semaine4.pdf"},
+  {"name": "Semaine5:Ensembles-finis-Denombrement", "date": "", "href": "semaine5.pdf"},
+  {"name": "Semaine6:Nombres-complexes", "date": "", "href": "semaine6.pdf"}
  ]
 }
