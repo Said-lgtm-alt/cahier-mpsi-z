@@ -2,17 +2,15 @@
  "Cours, année actuelle": [
   {"name": "Logique", "date": "", "href": "logique.pdf"},
   {"name": "Fonctions usuelles", "date": "", "href": "fonctions-usuelles.pdf"},
-  {"name": "Théorie des ensembles", "date": "", "href": "theorie-des-ensembles.pdf"}
+  {"name": "Chapitre 3 : Théorie des ensembles", "date": "", "href": "theorie-des-ensembles.pdf"}
  ],
  "Devoirs surveillés": [
-   {"name": "DS1", "date": "", "href": "ds-1-2627.pdf"},
-   {"name": "DS2", "date": "", "href": "DS-2.pdf"}
+  {"name": "DS n°1", "date": "", "href": "ds-1-2627.pdf"}
  ],
  "Colles": [
-  {"name": "colle-semaine1:Fonctions-usuelles", "date": "", "href": "colle-semaine1.pdf"},
-  {"name": "Colle-semaine2:Ensembles&applications", "date": "", "href": "colle-semaine2.pdf"},
-  {"name": "Colle–semaine3:Relations-binaires", "date": "", "href": "semaine3.pdf"},
-  {"name": "Colle-semaine4:Calcul-algebrique", "date": "", "href": "semaine4.pdf"},
-  {"name": "Colle-semaine5:Ensembles-finis-denombrement", "date": "", "href": "semaine5.pdf"}
+  {"name": "Colle n°1 – semaine du 7 septembre", "date": "", "href": "colle-semaine1.pdf"},
+  {"name": "Colle n°2 – semaine du 14 septembre", "date": "", "href": "colle-semaine2.pdf"},
+  {"name": "Colle n°4", "date": "", "href": "semaine4.pdf"},
+  {"name": "Colle n°5", "date": "", "href": "semaine5.pdf"}
  ]
 }
