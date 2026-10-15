@@ -60,20 +60,20 @@ body.eleve #pub{display:none!important}
 <h3>📁 Documents généraux</h3>
 <h2>Mathématiques</h2>
 <div id="nav"></div>
-<p style="margin:14px 0 0;display:flex;gap:6px;flex-wrap:wrap"><button onclick="exp()">Télécharger documents.json</button><button onclick="try{localStorage.removeItem('prof')}catch(e){};location.hash='';location.reload()">Quitter le mode enseignant</button></p>
+<p class="adm" style="margin:14px 0 0;display:flex;gap:6px;flex-wrap:wrap"><button onclick="exp()">Télécharger documents.json</button><button onclick="try{localStorage.removeItem('prof')}catch(e){};location.hash='';location.reload()">Quitter le mode enseignant</button></p>
 </aside>
 <main>
 <div class="bar"><span id="title"></span>
-<button onclick="toggle('fd')">+ Dossier</button>
-<button onclick="toggle('fx')">+ Document</button></div>
+<button class="adm" onclick="toggle('fd')">+ Dossier</button>
+<button class="adm" onclick="toggle('fx')">+ Document</button></div>
 <div class="crumb" id="crumb"></div>
 
-<form id="fd" onsubmit="addDir(event)">
+<form class="adm" id="fd" onsubmit="addDir(event)">
 <input class="f1" id="dn" placeholder="Nom du dossier (ex : Résumés de cours)" required>
 <button>Créer le dossier</button>
 </form>
 
-<form id="fx" onsubmit="addDoc(event)">
+<form class="adm" id="fx" onsubmit="addDoc(event)">
 <input class="f1" id="xt" placeholder="Titre (ex : 5 : Applications et dénombrement)" required>
 <input class="f2" id="xd" type="date">
 <input class="f1" id="xp" placeholder="Nom du fichier PDF (rempli en choisissant le fichier)" readonly>
@@ -81,16 +81,18 @@ body.eleve #pub{display:none!important}
 <button>Ajouter</button>
 </form>
 
-<div id="pub"></div>
+<div id="pub" class="adm"></div>
 <ul id="list"></ul>
 </main>
 </div>
 
 <script>
 const SECTIONS=["Cours, année actuelle","TD, année actuelle","Devoirs surveillés","Devoirs \"maison\"","Colles","Formulaires","Archives"];
-try{if(/prof/.test(location.hash))localStorage.setItem("prof","1")}catch(e){}
-let fl=false;try{fl=localStorage.getItem("prof")==="1"}catch(e){}
-const EL=!(/prof/.test(location.hash)||fl);document.body.classList.toggle("eleve",EL);
+const H=location.hash==="#prof";
+try{localStorage.removeItem("prof");if(H)sessionStorage.setItem("prof","1")}catch(e){}
+let fl=false;try{fl=sessionStorage.getItem("prof")==="1"}catch(e){}
+const EL=!(H||fl);document.body.classList.toggle("eleve",EL);
+if(EL)document.querySelectorAll(".adm").forEach(e=>e.remove());
 const SEED={"Cours, année actuelle": [{"name": "Logique", "date": "", "href": "logique.pdf"}, {"name": "Fonctions usuelles", "date": "", "href": "fonctions-usuelles.pdf"}], "Devoirs surveillés": [{"name": "DS n°1", "date": "", "href": "ds-1-2627.pdf"}]};
 let S={},cur=SECTIONS[0],path=[],pend=[],dirty=false,loadFail=false;
 function fill(d){const o={};SECTIONS.forEach(s=>o[s]=(d&&d[s])||[]);return o}
@@ -104,7 +106,7 @@ function url(h){return /^https?:/i.test(h)?h:encodeURI(h)}
 function safe(n){return n.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9._-]+/g,"-").replace(/^-+|-+$/g,"").toLowerCase()}
 function toggle(id){const f=document.getElementById(id);const was=f.classList.contains("show");
  document.querySelectorAll("form").forEach(x=>x.classList.remove("show"));if(!was)f.classList.add("show")}
-function pubBox(){const b=document.getElementById("pub");if(!dirty&&!loadFail){b.classList.remove("show");return}
+function pubBox(){const b=document.getElementById("pub");if(!b)return;if(!dirty&&!loadFail){b.classList.remove("show");return}
  b.classList.add("show");
  const w=loadFail?'<div style="color:#ff9b9b;margin-bottom:8px">⚠ La liste en ligne (documents.json) n’a pas pu être chargée : la page est ouverte depuis le disque ou sans connexion. Les documents récents n’apparaissent pas. Ne publiez rien depuis cette page : ouvrez l’adresse du site (avec #prof).</div>':"";
  if(!dirty){b.innerHTML=w;return}
@@ -124,15 +126,16 @@ function render(){
  let h=dirs.map(({x,i})=>`<li class="dir"><span class="t">📁 <a onclick="open_(${i})">${esc(x.name)}</a></span><span class="m">(${x.items.length} documents)</span><button class="x" title="Supprimer" onclick="del(${i})">✕</button></li>`).join("");
  h+=docs.map(({x,i})=>{const pdf=/\.pdf$/i.test(x.href||"");
   return `<li><span class="t">📄 ${x.href?`<a href="${esc(url(x.href))}" target="_blank" rel="noopener">${esc(x.name)}</a>`:`<strong>${esc(x.name)}</strong>`}</span><span class="m">${x.date?(pdf?"(pdf, ":"(")+fmt(x.date)+")":(pdf?"(pdf)":"")}</span>${pdf?`<a class="btn" href="${esc(url(x.href))}" download style="text-decoration:none">Télécharger</a>`:""}<button class="x" title="Supprimer" onclick="del(${i})">✕</button></li>`}).join("");
+ if(EL)h=h.replace(/<button class="x"[^>]*>✕<\/button>/g,"");
  document.getElementById("list").innerHTML=h||'<li class="empty">Dossier vide.</li>';
  pubBox();
 }
 function go(s){cur=s;path=[];render()}
 function up(n){path=path.slice(0,n);render()}
 function open_(i){path.push(i);render()}
-function del(i){const it=node()[i];if(confirm("Supprimer « "+it.name+" » ?")){node().splice(i,1);dirty=true;render()}}
-function addDir(e){e.preventDefault();node().push({name:dn.value.trim(),items:[]});dn.value="";dirty=true;render()}
-function addDoc(e){e.preventDefault();
+function del(i){if(EL)return;const it=node()[i];if(confirm("Supprimer « "+it.name+" » ?")){node().splice(i,1);dirty=true;render()}}
+function addDir(e){e.preventDefault();if(EL)return;node().push({name:dn.value.trim(),items:[]});dn.value="";dirty=true;render()}
+function addDoc(e){e.preventDefault();if(EL)return;
  if(!pendFile){alert("Choisissez d’abord le fichier PDF.");return}
  const nm=safe(pendFile.name);
  node().push({name:xt.value.trim(),date:xd.value,href:nm});
@@ -142,7 +145,7 @@ let pendFile=null;
 function pick(e){const f=e.target.files[0];if(!f)return;pendFile=f;xp.value=safe(f.name);if(!xt.value)xt.value=f.name.replace(/\.[^.]+$/,"");
  if(!xd.value)xd.value=new Date(f.lastModified).toISOString().slice(0,10)}
 function dlPend(k){const p=pend[k];saveFile(p.name,p.file,"application/pdf")}
-function exp(){if(loadFail&&!confirm("La liste en ligne n’a pas été chargée : ce fichier risque d’effacer des documents. Continuer quand même ?"))return;saveFile("documents.json",JSON.stringify(S,null,1),"application/json")}
+function exp(){if(EL)return;if(loadFail&&!confirm("La liste en ligne n’a pas été chargée : ce fichier risque d’effacer des documents. Continuer quand même ?"))return;saveFile("documents.json",JSON.stringify(S,null,1),"application/json")}
 </script>
 </body>
 </html>
