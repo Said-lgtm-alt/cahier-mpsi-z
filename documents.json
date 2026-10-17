@@ -23,9 +23,9 @@
  ],
  "TD, année actuelle": [
   {
-   "name": "Foctions-usuelles",
+   "name": "Fonctions-usuelles",
    "date": "2026-09-06",
-   "href": "foctions-usuelles.pdf"
+   "href": "Foctions-usuelles.pdf"
   },
   {
    "name": "logique",
@@ -40,7 +40,7 @@
   {
    "name": "Nombres .complexes",
    "date": "2026-10-12",
-   "href": "nombres.complexes.pdf"
+   "href": "Nombres .complexes.pdf"
   },
   {
    "name": "denombrement",
