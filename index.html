@@ -145,7 +145,8 @@ let pendFile=null;
 function pick(e){const f=e.target.files[0];if(!f)return;pendFile=f;xp.value=safe(f.name);if(!xt.value)xt.value=f.name.replace(/\.[^.]+$/,"");
  if(!xd.value)xd.value=new Date(f.lastModified).toISOString().slice(0,10)}
 function dlPend(k){const p=pend[k];saveFile(p.name,p.file,"application/pdf")}
-function exp(){if(EL)return;if(loadFail&&!confirm("La liste en ligne n’a pas été chargée : ce fichier risque d’effacer des documents. Continuer quand même ?"))return;saveFile("documents.json",JSON.stringify(S,null,1),"application/json")}
-</script>
+function exp(){if(EL)return;
+ if(loadFail){alert("La liste en ligne n'a pas été chargée : export bloqué pour ne rien écraser.");return}
+ saveFile("documents.json",JSON.stringify(S,null,1),"application/json")}</script>
 </body>
 </html>
