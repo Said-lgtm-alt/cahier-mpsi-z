@@ -93,7 +93,7 @@ try{localStorage.removeItem("prof");if(H)sessionStorage.setItem("prof","1")}catc
 let fl=false;try{fl=sessionStorage.getItem("prof")==="1"}catch(e){}
 const EL=!(H||fl);document.body.classList.toggle("eleve",EL);
 if(EL)document.querySelectorAll(".adm").forEach(e=>e.remove());
-const SEED={};
+const SEED={"Cours, année actuelle": [{"name": "Logique", "date": "", "href": "logique.pdf"}, {"name": "Fonctions usuelles", "date": "", "href": "fonctions-usuelles.pdf"}], "Devoirs surveillés": [{"name": "DS n°1", "date": "", "href": "ds-1-2627.pdf"}]};
 let S={},cur=SECTIONS[0],path=[],pend=[],dirty=false,loadFail=false;
 function fill(d){const o={};SECTIONS.forEach(s=>o[s]=(d&&d[s])||[]);return o}
 S=fill(SEED);render();
