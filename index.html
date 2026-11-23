@@ -97,7 +97,7 @@ const SEED={"Cours, année actuelle": [{"name": "Logique", "date": "", "href": "
 let S={},cur=SECTIONS[0],path=[],pend=[],dirty=false,loadFail=false;
 function fill(d){const o={};SECTIONS.forEach(s=>o[s]=(d&&d[s])||[]);return o}
 S=fill(SEED);render();
-document.getElementById("list").innerHTML=h||(loadFail?'<li class="empty">Liste indisponible, rechargez la page.</li>':'<li class="empty">Dossier vide.</li>');
+fetch("documents.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(d=>{S=fill(d);render()}).catch(()=>{loadFail=true;render()});
 function saveFile(name,data,type){const l=document.createElement("a");l.href=URL.createObjectURL(new Blob([data],{type}));l.download=name;document.body.appendChild(l);l.click();l.remove()}
 function node(){let a=S[cur];for(const i of path)a=a[i].items;return a}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
@@ -127,7 +127,7 @@ function render(){
  h+=docs.map(({x,i})=>{const pdf=/\.pdf$/i.test(x.href||"");
   return `<li><span class="t">📄 ${x.href?`<a href="${esc(url(x.href))}" target="_blank" rel="noopener">${esc(x.name)}</a>`:`<strong>${esc(x.name)}</strong>`}</span><span class="m">${x.date?(pdf?"(pdf, ":"(")+fmt(x.date)+")":(pdf?"(pdf)":"")}</span>${pdf?`<a class="btn" href="${esc(url(x.href))}" download style="text-decoration:none">Télécharger</a>`:""}<button class="x" title="Supprimer" onclick="del(${i})">✕</button></li>`}).join("");
  if(EL)h=h.replace(/<button class="x"[^>]*>✕<\/button>/g,"");
- document.getElementById("list").innerHTML=h||(loadFail?'<li class="empty">Liste indisponible, rechargez la page.</li>':'<li class="empty">Dossier vide.</li>');
+ document.getElementById("list").innerHTML=h||'<li class="empty">Dossier vide.</li>';
  pubBox();
 }
 function go(s){cur=s;path=[];render()}
@@ -145,8 +145,7 @@ let pendFile=null;
 function pick(e){const f=e.target.files[0];if(!f)return;pendFile=f;xp.value=safe(f.name);if(!xt.value)xt.value=f.name.replace(/\.[^.]+$/,"");
  if(!xd.value)xd.value=new Date(f.lastModified).toISOString().slice(0,10)}
 function dlPend(k){const p=pend[k];saveFile(p.name,p.file,"application/pdf")}
-function exp(){if(EL)return;
- if(loadFail){alert("La liste en ligne n'a pas été chargée : export bloqué pour ne rien écraser.");return}
- saveFile("documents.json",JSON.stringify(S,null,1),"application/json")}</script>
+function exp(){if(EL)return;if(loadFail&&!confirm("La liste en ligne n’a pas été chargée : ce fichier risque d’effacer des documents. Continuer quand même ?"))return;saveFile("documents.json",JSON.stringify(S,null,1),"application/json")}
+</script>
 </body>
 </html>
